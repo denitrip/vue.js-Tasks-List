@@ -1,0 +1,47 @@
+.rcorners {
+  border-radius: 5px;
+  background: #73AD21;
+  padding: 10px;
+  width: 50px;
+  height: 50px;
+}
+
+.modal-row {
+  text-align: right;
+  margin-top: 10px;
+}
+.red {
+  color:red;
+}
+
+.green {
+  color: green;
+}
+
+.pos-center {
+  justify-content: center;
+}
+
+.margin-top-10 {
+  margin-top: 10px;
+}
+
+.margin-bottom-10 {
+  margin-bottom: 10px;
+}
+
+.margin-top-5 {
+  margin-top: 10px;
+}
+
+.margin-bottom-5 {
+  margin-bottom: 10px;
+}
+
+input {
+  width: 90%;
+}
+
+.required {
+  border-color: #f39898 !important;
+}
