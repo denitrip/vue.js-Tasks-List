@@ -24,9 +24,9 @@
         <b-col>
           <multiselect v-model="taskData.project" :max-height="200"
                        placeholder="Choose project" label="name" track-by="id"
-                       :options="projects"
+                       :options="projects" :allow-empty="false"
                        :show-labels="false" :multiple="false"
-                       :taggable="true" :close-on-select="true"></multiselect>
+                       :close-on-select="true"></multiselect>
         </b-col>
       </b-row>
     </b-modal>
@@ -39,9 +39,7 @@
     cleanFilters
   } from '../../helpers/commonHelpers';
   import Multiselect from 'vue-multiselect';
-  import {mapGetters} from "vuex";
-  import {mapMutations} from "vuex";
-  import {mapActions} from "vuex";
+  import {mapState} from "vuex";
 
   export default {
     components: {
@@ -64,7 +62,7 @@
         else {
           const savedObject = {
           title: this.taskData.title,
-          status: 'pending',
+          status: 'active',
           project: this.taskData.project ? this.taskData.project.name : null
         };
           this.$store.commit('tasks/addTask', savedObject);
@@ -73,9 +71,10 @@
       }
     },
     computed: {
-      ...mapGetters('tasks', {
-        projects: 'projects'
-      })
+      ...mapState('tasks', ['projects'])
+    },
+    beforeMount() {
+      this.$store.dispatch('tasks/getProjects');
     },
     mounted() {
       this.$root.$on('openTaskModal', () => {

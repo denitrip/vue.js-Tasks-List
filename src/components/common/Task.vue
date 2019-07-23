@@ -69,7 +69,6 @@
         return this.project || ``
       },
       taskStatus() {
-        console.log('status', this.status)
         return this.status === 'active'
       }
     },
