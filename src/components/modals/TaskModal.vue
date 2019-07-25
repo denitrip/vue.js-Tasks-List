@@ -12,8 +12,8 @@
           <label class="typo__label">Title</label>
         </b-col>
         <b-col>
+      <!--    :class="{ required: (!taskData.title) }"-->
           <input class="form-control" v-model="taskData.title"
-                 :class="{ required: (!taskData.title) }"
                  placeholder="Enter task title">
         </b-col>
       </b-row>
@@ -38,6 +38,9 @@
     setNotifyData,
     cleanFilters
   } from '../../helpers/commonHelpers';
+  import {
+    serverUrl
+  } from '../../config/config.js';
   import Multiselect from 'vue-multiselect';
   import {mapState} from "vuex";
 
@@ -60,26 +63,29 @@
           this.$notify(setNotifyData('Error', 'Please enter task title', 'error'));
         }
         else {
-          const savedObject = {
+          const params = {
           title: this.taskData.title,
           status: 'active',
           project: this.taskData.project ? this.taskData.project.name : null
         };
-          this.$store.commit('tasks/addTask', savedObject);
-          this.$notify(setNotifyData('Success', 'Task has been created!', 'success'));
+          this.$http.post(`${serverUrl}/api/tasks`, {params}).then(()=>{
+            this.$root.$emit('reloadTasks');
+            this.$notify(setNotifyData('Success', 'Task has been created!', 'success'));
+          }).catch((error) => {
+            console.log(error);
+            this.$notify(setNotifyData('Warning', 'Task has not been created!', 'Warning'));
+          });
         }
       }
     },
     computed: {
       ...mapState('tasks', ['projects'])
     },
-    beforeMount() {
-      this.$store.dispatch('tasks/getProjects');
-    },
     mounted() {
       this.$root.$on('openTaskModal', () => {
         if (this.$refs['TaskModal']) {
           cleanFilters(this.taskData);
+          this.$store.dispatch('tasks/getProjects');
           this.$refs['TaskModal'].show();
         }
       })

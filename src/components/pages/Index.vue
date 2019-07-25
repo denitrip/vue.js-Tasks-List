@@ -28,9 +28,7 @@
 <script>
 
   import Vue from 'vue';
-  import {mapGetters} from "vuex";
-  import {mapMutations} from "vuex";
-  import {mapActions} from "vuex";
+  import {mapState} from "vuex";
   import Task from '../common/Task';
   import TaskModal from '../modals/TaskModal';
 
@@ -50,26 +48,37 @@
         this.$root.$emit('openTaskModal');
       },
       search() {
-        this.filteredTasks = this.allTasks.filter(e => e.title.toLowerCase().includes(this.searchData.toLowerCase()))
+        this.filteredTasks = this.tasks.filter(e => e.title.toLowerCase().includes(this.searchData.toLowerCase()))
       },
       setDefaults() {
-        this.filteredTasks = this.allTasks;
+        this.filteredTasks = this.tasks;
       },
+      loadTasks() {
+        this.$store.dispatch('tasks/getTasks');
+      }
     },
     computed: {
-      ...mapGetters('tasks', {
-        allTasks: 'tasks'
-      })
+      ...mapState('tasks', ['tasks'])
     },
     watch: {
-      allTasks: function () {
+      tasks: function () {
         this.setDefaults();
         this.search();
       }
     },
     beforeMount() {
       this.setDefaults();
+      this.loadTasks();
+    },
+    mounted() {
+      this.$root.$on('reloadTasks', () => {
+        this.loadTasks();
+      })
+    },
+    beforeDestroy() {
+      this.$root.$off('reloadTasks');
     }
+
   }
 </script>
 

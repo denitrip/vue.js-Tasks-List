@@ -42,9 +42,12 @@
 <script>
 
   import Vue from 'vue';
-  import {mapGetters} from "vuex";
-  import {mapMutations} from "vuex";
-  import {mapActions} from "vuex";
+  import {
+    serverUrl
+  } from '../../config/config.js'
+  import {
+    setNotifyData,
+  } from '../../helpers/commonHelpers';
 
   export default {
     props: ['id', 'title', 'project', 'status'],
@@ -55,10 +58,22 @@
     },
     methods: {
       completeTask() {
-        this.$store.commit('tasks/changeStatus', {id: this.id, status: 'completed'});
+        this.$http.put(`${serverUrl}/api/tasks/${this.id}`, {status: 'completed'}).then(()=>{
+          this.$root.$emit('reloadTasks');
+          this.$notify(setNotifyData('Success', 'Task has been completed!', 'success'));
+        }).catch((error) => {
+          console.log(error);
+          this.$notify(setNotifyData('Warning', 'Task has not been completed!', 'Warning'));
+        });
       },
       deleteTask() {
-        this.$store.commit('tasks/deleteTask', this.id);
+        this.$http.delete(`${serverUrl}/api/tasks/${this.id}`, {status: 'completed'}).then(()=>{
+          this.$root.$emit('reloadTasks');
+          this.$notify(setNotifyData('Success', 'Task has been deleted!', 'success'));
+        }).catch((error) => {
+          console.log(error);
+          this.$notify(setNotifyData('Warning', 'Task has not been deleted!', 'Warning'));
+        });
       }
     },
     computed: {
